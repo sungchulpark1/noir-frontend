@@ -1,6 +1,4 @@
 import { useNavigation } from '@react-navigation/native';
-import Svg, { Circle, Path } from 'react-native-svg';
-// Import the type for navigation prop
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useEffect, useRef, useState } from 'react';
 import {
@@ -10,6 +8,7 @@ import {
   Text,
   View,
 } from 'react-native';
+import Svg, { Circle, Path } from 'react-native-svg';
 
 const EyeIcon = (props: { width?: number; height?: number }) => (
   <Svg width={props.width || 64} height={props.height || 64} viewBox="0 0 64 64" fill="none">
@@ -26,8 +25,7 @@ type RootStackParamList = {
 
 const messages = ["You're Early.", "You're Late.", "You're Here."];
 
-export default function SplashScreen() {
-  // const navigation = useNavigation();
+export default function LandingPage() {
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const [index, setIndex] = useState(0);
   const [canProceed, setCanProceed] = useState(false);
