@@ -1,75 +1,118 @@
-import { Image } from 'expo-image';
-import { Platform, StyleSheet } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+import Svg, { Circle, Path } from 'react-native-svg';
+// Import the type for navigation prop
+import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { useEffect, useRef, useState } from 'react';
+import {
+  Animated,
+  Pressable,
+  StyleSheet,
+  Text,
+  View,
+} from 'react-native';
 
-import { HelloWave } from '@/components/HelloWave';
-import ParallaxScrollView from '@/components/ParallaxScrollView';
-import { ThemedText } from '@/components/ThemedText';
-import { ThemedView } from '@/components/ThemedView';
+const EyeIcon = (props: { width?: number; height?: number }) => (
+  <Svg width={props.width || 64} height={props.height || 64} viewBox="0 0 64 64" fill="none">
+    <Path
+      d="M32 14C17 14 5.5 32 5.5 32C5.5 32 17 50 32 50C47 50 58.5 32 58.5 32C58.5 32 47 14 32 14Z" stroke="#EEE8D5" strokeWidth="3"
+    />
+    <Circle cx="32" cy="32" r="8" fill="#EEE8D5"/>
+  </Svg>
+);
 
-export default function HomeScreen() {
+type RootStackParamList = {
+  explore: undefined;
+};
+
+const messages = ["You're Early.", "You're Late.", "You're Here."];
+
+export default function SplashScreen() {
+  // const navigation = useNavigation();
+  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+  const [index, setIndex] = useState(0);
+  const [canProceed, setCanProceed] = useState(false);
+  const opacity = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    if (canProceed) return;
+
+    const fadeTextIn = () => {
+      Animated.timing(opacity, {
+        toValue: 1,
+        duration: 600,
+        useNativeDriver: true,
+      }).start();
+    };
+
+    const fadeTextOut = (onComplete: () => void) => {
+      Animated.timing(opacity, {
+        toValue: 0,
+        duration: 600,
+        useNativeDriver: true,
+      }).start(() => onComplete());
+    };
+
+    fadeTextIn();
+
+    const interval = setInterval(() => {
+      fadeTextOut(() => {
+        const next = (index + 1) % messages.length;
+        setIndex(next);
+        fadeTextIn();
+
+        if (next === 2) setCanProceed(true);
+      });
+    }, 2000);
+
+    return () => clearInterval(interval);
+  }, [index, opacity, canProceed, setCanProceed]);
+
+  const handleTap = () => {
+    if (canProceed) {
+      navigation.navigate('explore');
+    }
+  };
+
   return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
-      headerImage={
-        <Image
-          source={require('@/assets/images/partial-react-logo.png')}
-          style={styles.reactLogo}
-        />
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Welcome!</ThemedText>
-        <HelloWave />
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 1: Try it</ThemedText>
-        <ThemedText>
-          Edit <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> to see changes.
-          Press{' '}
-          <ThemedText type="defaultSemiBold">
-            {Platform.select({
-              ios: 'cmd + d',
-              android: 'cmd + m',
-              web: 'F12',
-            })}
-          </ThemedText>{' '}
-          to open developer tools.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-        <ThemedText>
-          {`Tap the Explore tab to learn more about what's included in this starter app.`}
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
-        <ThemedText>
-          {`When you're ready, run `}
-          <ThemedText type="defaultSemiBold">npm run reset-project</ThemedText> to get a fresh{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> directory. This will move the current{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> to{' '}
-          <ThemedText type="defaultSemiBold">app-example</ThemedText>.
-        </ThemedText>
-      </ThemedView>
-    </ParallaxScrollView>
+    <Pressable onPress={handleTap} style={styles.container}>
+      <Animated.Text style={[styles.text, { opacity }]}>
+        {messages[index]}
+      </Animated.Text>
+      <View style={styles.eyeContainer}>
+        <EyeIcon width={64} height={64} />
+        <Text style={styles.tagline}>IT’S YOU</Text>
+        <Text style={styles.hint}>Tap To Continue</Text>
+      </View>
+    </Pressable>
   );
 }
 
 const styles = StyleSheet.create({
-  titleContainer: {
-    flexDirection: 'row',
+  container: {
+    flex: 1,
+    backgroundColor: '#000',
+    justifyContent: 'center',
     alignItems: 'center',
-    gap: 8,
   },
-  stepContainer: {
-    gap: 8,
-    marginBottom: 8,
+  text: {
+    fontSize: 28,
+    color: '#EEE8D5',
+    fontFamily: 'Georgia',
+    marginBottom: 40,
   },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
-    position: 'absolute',
+  eyeContainer: {
+    alignItems: 'center',
+    marginTop: 20,
+  },
+  tagline: {
+    fontSize: 16,
+    color: '#EEE8D5',
+    marginTop: 8,
+    letterSpacing: 1.2,
+  },
+  hint: {
+    color: '#888',
+    fontSize: 14,
+    marginTop: 40,
   },
 });
