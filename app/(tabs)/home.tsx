@@ -1,13 +1,11 @@
-import { useNavigation } from '@react-navigation/native';
-import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useEffect, useRef, useState } from 'react';
 import {
   Animated,
-  Pressable,
+  Dimensions,
   StyleSheet,
   Text,
   TextInput,
-  View,
+  View
 } from 'react-native';
 import Svg, { Circle, Path } from 'react-native-svg';
 
@@ -22,92 +20,89 @@ const EyeIcon = ({ width = 64, height = 64 }) => (
   </Svg>
 );
 
-type RootStackParamList = {
-  explore: undefined;
-};
-
-const messages = ["You're early.", "You're late.", "You're here."];
+const { height: SCREEN_HEIGHT } = Dimensions.get('window');
 
 export default function HomePage() {
-  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
-  const [index, setIndex] = useState(0);
-  const [canProceed, setCanProceed] = useState(false);
-  const opacity = useRef(new Animated.Value(0)).current;
+  const scrollY = useRef(new Animated.Value(0)).current;
+  const [quote, setQuote] = useState('Loading...');
 
   useEffect(() => {
-    if (canProceed) return;
+    const fetchQuote = async () => {
+      try {
+        const response = await fetch('http://localhost:3000/quotes');
+        const data = await response.json();
+        setQuote(`"${data.default}"`);
+      } catch (error) {
+        console.error('Error fetching quote:', error);
+      }
+    };
 
-    const fadeIn = () =>
-      Animated.timing(opacity, {
-        toValue: 1,
-        duration: 600,
-        useNativeDriver: true,
-      }).start();
+    fetchQuote();
+  }, []);
 
-    const fadeOut = (onComplete: () => void) =>
-      Animated.timing(opacity, {
-        toValue: 0,
-        duration: 600,
-        useNativeDriver: true,
-      }).start(onComplete);
+  const parallaxTranslate = scrollY.interpolate({
+    inputRange: [0, 200],
+    outputRange: [0, -60],
+    extrapolate: 'clamp',
+  });
 
-    fadeIn();
-
-    const interval = setInterval(() => {
-      fadeOut(() => {
-        const next = (index + 1) % messages.length;
-        setIndex(next);
-        fadeIn();
-
-        if (next === 2) setCanProceed(true);
-      });
-    }, 2000);
-
-    return () => clearInterval(interval);
-  }, [index, opacity, canProceed]);
-
-  const handleTap = () => {
-    if (canProceed) {
-      navigation.navigate('explore');
-    }
-  };
+  const parallaxOpacity = scrollY.interpolate({
+    inputRange: [0, 120],
+    outputRange: [1, 0.3],
+    extrapolate: 'clamp',
+  });
 
   return (
-    <Pressable onPress={handleTap} style={styles.container}>
-      <Text style={styles.meta}>Rank: F-Rank   |   Streak: Guest #452</Text>
-
-      <Animated.Text style={[styles.title, { opacity }]}>
-        {messages[index]}
-      </Animated.Text>
-
-      <View style={styles.section}>
-        <Text style={styles.heading}>Quote of the Day</Text>
-        <Text style={styles.quote}>“You only find what you&apos;re willing to lose.”</Text>
-      </View>
-
-      <View style={styles.section}>
-        <Text style={styles.heading}>Today’s Bounty</Text>
-        <Text style={styles.bounty}>☐ Leave a note for a stranger</Text>
-        <View style={styles.button}>
-          <Text style={styles.buttonText}>Mark as Complete</Text>
+    <View style={styles.container}>
+      <Animated.View
+        style={[
+          styles.parallaxHeader,
+          {
+            transform: [{ translateY: parallaxTranslate }],
+            opacity: parallaxOpacity,
+          },
+        ]}
+      >
+        <Text style={styles.meta}>Rank: F-Rank   |   Identity: Guest #452</Text>
+      </Animated.View>
+      <Animated.ScrollView
+        contentContainerStyle={{ paddingTop: 60, paddingBottom: 40 }}
+        showsVerticalScrollIndicator={false}
+        scrollEventThrottle={16}
+        onScroll={Animated.event(
+          [{ nativeEvent: { contentOffset: { y: scrollY } } }],
+          { useNativeDriver: true }
+        )}
+      >
+        <View style={styles.section}>
+          <Text style={styles.heading}>Quote of the Day</Text>
+          <Text style={styles.quote}>{quote}</Text>
         </View>
-      </View>
 
-      <View style={styles.section}>
-        <Text style={styles.heading}>Leave an Echo</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="Something you want to say..."
-          placeholderTextColor="#666"
-          multiline
-        />
-      </View>
+        <View style={styles.section}>
+          <Text style={styles.heading}>Today’s Bounty</Text>
+          <Text style={styles.bounty}>☐ Leave a note for a stranger</Text>
+          <View style={styles.button}>
+            <Text style={styles.buttonText}>Mark as Complete</Text>
+          </View>
+        </View>
 
-      <View style={styles.eyeContainer}>
-        <EyeIcon />
-        <Text style={styles.tagline}>IT’S YOU</Text>
-      </View>
-    </Pressable>
+        <View style={styles.section}>
+          <Text style={styles.heading}>Leave an Echo</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="Something you want to say..."
+            placeholderTextColor="#666"
+            multiline
+          />
+        </View>
+
+        <View style={styles.eyeContainer}>
+          <EyeIcon />
+          <Text style={styles.tagline}>IT’S YOU</Text>
+        </View>
+      </Animated.ScrollView>
+    </View>
   );
 }
 
@@ -115,13 +110,21 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#0a0a0a',
-    padding: 24,
-    justifyContent: 'flex-start',
+    paddingHorizontal: 24,
+  },
+  parallaxHeader: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    zIndex: 10,
+    backgroundColor: 'transparent',
+    paddingTop: 24,
+    paddingBottom: 12,
   },
   meta: {
     color: '#aaa',
     fontSize: 14,
-    marginBottom: 20,
     textAlign: 'center',
   },
   title: {

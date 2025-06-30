@@ -20,7 +20,7 @@ const EyeIcon = (props: { width?: number; height?: number }) => (
 );
 
 type RootStackParamList = {
-  explore: undefined;
+  home: undefined;
 };
 
 const messages = ["You're Early.", "You're Late.", "You're Here."];
@@ -50,6 +50,14 @@ export default function LandingPage() {
       }).start(() => onComplete());
     };
 
+    const fadeHintTextIn = () => {
+      Animated.timing(opacity, {
+        toValue: 1,
+        duration: 600,
+        useNativeDriver: true,
+      }).start();
+    };
+
     fadeTextIn();
 
     const interval = setInterval(() => {
@@ -58,7 +66,10 @@ export default function LandingPage() {
         setIndex(next);
         fadeTextIn();
 
-        if (next === 2) setCanProceed(true);
+        if (next === 2) {
+          fadeHintTextIn();
+          setCanProceed(true);
+        }
       });
     }, 2000);
 
@@ -67,7 +78,7 @@ export default function LandingPage() {
 
   const handleTap = () => {
     if (canProceed) {
-      navigation.navigate('explore');
+      navigation.navigate('home');
     }
   };
 
@@ -79,7 +90,7 @@ export default function LandingPage() {
       <View style={styles.eyeContainer}>
         <EyeIcon width={64} height={64} />
         <Text style={styles.tagline}>IT’S YOU</Text>
-        <Text style={styles.hint}>Tap To Continue</Text>
+        <Text style={styles.hint}>{canProceed ? 'Tap To Continue' : 'Loading...'}</Text>
       </View>
     </Pressable>
   );
@@ -93,8 +104,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   text: {
-    fontSize: 28,
     color: '#EEE8D5',
+    fontSize: 28,
     fontFamily: 'Georgia',
     marginBottom: 40,
   },
@@ -103,8 +114,8 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
   tagline: {
-    fontSize: 16,
     color: '#EEE8D5',
+    fontSize: 16,
     marginTop: 8,
     letterSpacing: 1.2,
   },
@@ -112,5 +123,6 @@ const styles = StyleSheet.create({
     color: '#888',
     fontSize: 14,
     marginTop: 40,
+    height: 20,
   },
 });
