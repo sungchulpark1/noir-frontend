@@ -5,18 +5,17 @@ import {
   Text,
   View
 } from 'react-native';
-import Svg, { Circle, Path } from 'react-native-svg';
 
-const EyeIcon = ({ width = 64, height = 64 }) => (
-  <Svg width={width} height={height} viewBox="0 0 64 64" fill="none">
-    <Path
-      d="M32 14C17 14 5.5 32 5.5 32C5.5 32 17 50 32 50C47 50 58.5 32 58.5 32C58.5 32 47 14 32 14Z"
-      stroke="#EEE8D5"
-      strokeWidth="3"
-    />
-    <Circle cx="32" cy="32" r="8" fill="#EEE8D5" />
-  </Svg>
-);
+// const EyeIcon = ({ width = 64, height = 64 }) => (
+//   <Svg width={width} height={height} viewBox="0 0 64 64" fill="none">
+//     <Path
+//       d="M32 14C17 14 5.5 32 5.5 32C5.5 32 17 50 32 50C47 50 58.5 32 58.5 32C58.5 32 47 14 32 14Z"
+//       stroke="#EEE8D5"
+//       strokeWidth="3"
+//     />
+//     <Circle cx="32" cy="32" r="8" fill="#EEE8D5" />
+//   </Svg>
+// );
 
 // const { height: SCREEN_HEIGHT } = Dimensions.get('window');
 
