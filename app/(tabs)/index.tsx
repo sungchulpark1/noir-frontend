@@ -31,7 +31,7 @@ export default function LandingPage() {
   const [canProceed, setCanProceed] = useState(false);
   const textOpacity = useRef(new Animated.Value(0)).current;
   const hintTextOpacity = useRef(new Animated.Value(1)).current;
-  const [hintText, setHintText] = useState('Loading...');
+  const [hintText, setHintText] = useState('Loading.');
 
   useEffect(() => {
     if (canProceed) return;
@@ -87,7 +87,21 @@ export default function LandingPage() {
       });
     }, 2000);
 
-    return () => clearInterval(interval);
+     const loadingInterval = setInterval(() => {
+      if (canProceed) return;
+
+      setHintText(prev => {
+        if (prev === 'Tap To Continue') return prev;
+        
+        const dots = '.'. repeat((prev.match(/\./g) || []).length % 3 + 1);
+        return 'Loading' + dots;
+      });
+    }, 800);
+
+    return () => { 
+      clearInterval(interval);
+      clearInterval(loadingInterval);
+    };
   }, [index, textOpacity, hintTextOpacity, canProceed, setCanProceed]);
 
   const handleTap = () => {
