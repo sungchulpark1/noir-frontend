@@ -97,14 +97,16 @@ export default function LandingPage() {
   };
 
   return (
-    <Pressable onPress={handleTap} style={styles.container}>
+    <Pressable onPress={handleTap} style={styles.container} disabled={!canProceed}>
       <Animated.Text style={[styles.text, { opacity: textOpacity }]}>
         {messages[index]}
       </Animated.Text>
       <View style={styles.eyeContainer}>
         <EyeIcon width={64} height={64} />
         <Text style={styles.tagline}>IT’S YOU</Text>
-        <Animated.Text style={[styles.hint, { opacity: hintTextOpacity }]}>{hintText}</Animated.Text>
+        <Animated.Text style={[styles.hint, { opacity: hintTextOpacity }]}>
+          {hintText}
+        </Animated.Text>
       </View>
     </Pressable>
   );
