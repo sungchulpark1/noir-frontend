@@ -37,21 +37,21 @@ export default function HomePage() {
     fetchQuote();
   }, []);
 
-  const parallaxTranslate = scrollY.interpolate({
-    inputRange: [0, 200],
-    outputRange: [0, -60],
-    extrapolate: 'clamp',
-  });
+  // const parallaxTranslate = scrollY.interpolate({
+  //   inputRange: [0, 200],
+  //   outputRange: [0, -60],
+  //   extrapolate: 'clamp',
+  // });
 
-  const parallaxOpacity = scrollY.interpolate({
-    inputRange: [0, 120],
-    outputRange: [1, 0.3],
-    extrapolate: 'clamp',
-  });
+  // const parallaxOpacity = scrollY.interpolate({
+  //   inputRange: [0, 120],
+  //   outputRange: [1, 0.3],
+  //   extrapolate: 'clamp',
+  // });
 
   return (
     <View style={styles.container}>
-      <Animated.View
+      {/* <Animated.View
         style={[
           styles.parallaxHeader,
           {
@@ -63,9 +63,9 @@ export default function HomePage() {
         <Text style={styles.meta}>
           Rank: F-Rank   |   Identity: Guest #452
         </Text>
-      </Animated.View>
+      </Animated.View> */}
       <Animated.ScrollView
-        contentContainerStyle={{ paddingTop: 70, paddingBottom: 0 }}
+        contentContainerStyle={{ paddingTop: 20, paddingBottom: 0 }}
         showsVerticalScrollIndicator={false}
         scrollEventThrottle={16}
         onScroll={Animated.event(
