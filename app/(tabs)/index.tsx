@@ -15,7 +15,7 @@ const EyeIcon = (props: { width?: number; height?: number }) => (
     <Path
       d="M32 14C17 14 5.5 32 5.5 32C5.5 32 17 50 32 50C47 50 58.5 32 58.5 32C58.5 32 47 14 32 14Z" stroke="#EEE8D5" strokeWidth="3"
     />
-    <Circle cx="32" cy="32" r="8" fill="#EEE8D5"/>
+    <Circle cx="32" cy="32" r="8" fill="#EEE8D5" />
   </Svg>
 );
 
@@ -29,33 +29,43 @@ export default function LandingPage() {
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const [index, setIndex] = useState(0);
   const [canProceed, setCanProceed] = useState(false);
-  const opacity = useRef(new Animated.Value(0)).current;
+  const textOpacity = useRef(new Animated.Value(0)).current;
+  const hintTextOpacity = useRef(new Animated.Value(1)).current;
+  const [hintText, setHintText] = useState('Loading...');
 
   useEffect(() => {
     if (canProceed) return;
 
-    const fadeTextIn = () => {
-      Animated.timing(opacity, {
-        toValue: 1,
-        duration: 600,
-        useNativeDriver: true,
-      }).start();
-    };
-
     const fadeTextOut = (onComplete: () => void) => {
-      Animated.timing(opacity, {
+      Animated.timing(textOpacity, {
         toValue: 0,
         duration: 600,
         useNativeDriver: true,
       }).start(() => onComplete());
     };
 
-    const fadeHintTextIn = () => {
-      Animated.timing(opacity, {
+    const fadeTextIn = () => {
+      Animated.timing(textOpacity, {
         toValue: 1,
         duration: 600,
         useNativeDriver: true,
       }).start();
+    };
+
+    const fadeHintTextOut = (onComplete: () => void) => {
+      Animated.timing(hintTextOpacity, {
+        toValue: 0,
+        duration: 600,
+        useNativeDriver: true,
+      }).start(() => onComplete());
+    };
+
+    const fadeHintTextIn = (onComplete: () => void) => {
+      Animated.timing(hintTextOpacity, {
+        toValue: 1,
+        duration: 600,
+        useNativeDriver: true,
+      }).start(() => onComplete());
     };
 
     fadeTextIn();
@@ -67,14 +77,18 @@ export default function LandingPage() {
         fadeTextIn();
 
         if (next === 2) {
-          fadeHintTextIn();
-          setCanProceed(true);
+          fadeHintTextOut(() => {
+            setHintText('Tap To Continue');
+            fadeHintTextIn(() => {
+              setCanProceed(true);
+            });
+          });
         }
       });
     }, 2000);
 
     return () => clearInterval(interval);
-  }, [index, opacity, canProceed, setCanProceed]);
+  }, [index, textOpacity, hintTextOpacity, canProceed, setCanProceed]);
 
   const handleTap = () => {
     if (canProceed) {
@@ -84,13 +98,13 @@ export default function LandingPage() {
 
   return (
     <Pressable onPress={handleTap} style={styles.container}>
-      <Animated.Text style={[styles.text, { opacity }]}>
+      <Animated.Text style={[styles.text, { opacity: textOpacity }]}>
         {messages[index]}
       </Animated.Text>
       <View style={styles.eyeContainer}>
         <EyeIcon width={64} height={64} />
         <Text style={styles.tagline}>IT’S YOU</Text>
-        <Text style={styles.hint}>{canProceed ? 'Tap To Continue' : 'Loading...'}</Text>
+        <Animated.Text style={[styles.hint, { opacity: hintTextOpacity }]}>{hintText}</Animated.Text>
       </View>
     </Pressable>
   );
