@@ -1,10 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
 import {
   Animated,
-  Dimensions,
   StyleSheet,
   Text,
-  TextInput,
   View
 } from 'react-native';
 import Svg, { Circle, Path } from 'react-native-svg';
@@ -20,7 +18,7 @@ const EyeIcon = ({ width = 64, height = 64 }) => (
   </Svg>
 );
 
-const { height: SCREEN_HEIGHT } = Dimensions.get('window');
+// const { height: SCREEN_HEIGHT } = Dimensions.get('window');
 
 export default function HomePage() {
   const scrollY = useRef(new Animated.Value(0)).current;
@@ -31,7 +29,7 @@ export default function HomePage() {
       try {
         const response = await fetch('http://localhost:3000/quotes');
         const data = await response.json();
-        setQuote(`"${data.default}"`);
+        setQuote(`"${data.content}"`);
       } catch (error) {
         console.error('Error fetching quote:', error);
       }
@@ -63,10 +61,12 @@ export default function HomePage() {
           },
         ]}
       >
-        <Text style={styles.meta}>Rank: F-Rank   |   Identity: Guest #452</Text>
+        <Text style={styles.meta}>
+          Rank: F-Rank   |   Identity: Guest #452
+        </Text>
       </Animated.View>
       <Animated.ScrollView
-        contentContainerStyle={{ paddingTop: 60, paddingBottom: 40 }}
+        contentContainerStyle={{ paddingTop: 70, paddingBottom: 0 }}
         showsVerticalScrollIndicator={false}
         scrollEventThrottle={16}
         onScroll={Animated.event(
@@ -79,7 +79,7 @@ export default function HomePage() {
           <Text style={styles.quote}>{quote}</Text>
         </View>
 
-        <View style={styles.section}>
+        {/* <View style={styles.section}>
           <Text style={styles.heading}>Today’s Bounty</Text>
           <Text style={styles.bounty}>☐ Leave a note for a stranger</Text>
           <View style={styles.button}>
@@ -95,12 +95,12 @@ export default function HomePage() {
             placeholderTextColor="#666"
             multiline
           />
-        </View>
+        </View> */}
 
-        <View style={styles.eyeContainer}>
+        {/* <View style={styles.eyeContainer}>
           <EyeIcon />
           <Text style={styles.tagline}>IT’S YOU</Text>
-        </View>
+        </View> */}
       </Animated.ScrollView>
     </View>
   );
