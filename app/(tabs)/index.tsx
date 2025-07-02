@@ -85,7 +85,7 @@ export default function LandingPage() {
       setHintText(prev => {
         if (prev === 'Tap To Continue') return prev;
         
-        const dots = '.'. repeat((prev.match(/\./g) || []).length % 3 + 1);
+        const dots = '.'.repeat((prev.match(/\./g) || []).length % 3 + 1);
         return 'Loading' + dots;
       });
     }, 800);
