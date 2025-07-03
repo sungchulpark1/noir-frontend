@@ -4,8 +4,6 @@ import {
 
 export const styles = StyleSheet.create({
   container: {
-    // minHeight: '100vh',
-    // paddingTop: 50,
     flex: 1,
     backgroundColor: '#000',
     justifyContent: 'center',
