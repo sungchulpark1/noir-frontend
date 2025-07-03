@@ -1,52 +1,115 @@
-import {
-  Animated,
-} from 'react-native';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { Animated } from 'react-native';
 
-import { useEffect, useRef, useState } from 'react';
+import { ThemedView } from '@/components/ThemedView';
+
+import { FontAwesome5 } from '@expo/vector-icons';
+import * as Font from 'expo-font';
+import * as SplashScreen from 'expo-splash-screen';
 
 import { styles } from '../styles';
 
 const messages = [
   "You're Early.",
   "You're Late.",
-  "You're Here."
+  "You're Here.",
+  "You Made It.",
+  "Welcome Home.",
 ];
 
 export default function PresenceMessage() {
-  const opacity = useRef(new Animated.Value(0)).current;
-  const [idx, setIdx] = useState(0);
+  const [fontsLoaded, setFontsLoaded] = useState(false);
+
+  const affSeqOpacity = useRef(new Animated.Value(0)).current;
+
+  const houseIconOpacity = useRef(new Animated.Value(0)).current;
+
+  const [sequenceIdx, setSequenceIdx] = useState(0);
+
+  const [affSeqComplete, setAffSeqComplete] = useState(false);
+
+  const onLayoutRootView = useCallback(async () => {
+    if (fontsLoaded) {
+      await SplashScreen.hideAsync();
+    }
+  }, [fontsLoaded]);
 
   useEffect(() => {
+    let isMounted = true;
+
     const animateOpacity = (
-      opacityTarget: number,
-      animationDuration: number = 1000
-    ) => {
-      return new Promise<void>((resolve) => {
+      opacity: Animated.Value,
+      toValue: number,
+      duration = 200,
+    ) =>
+      new Promise<void>((resolve) => {
         Animated.timing(opacity, {
-          toValue: opacityTarget,
-          duration: animationDuration,
+          toValue,
+          duration,
           useNativeDriver: true,
         }).start(() => resolve());
       });
-    };
 
-    const runAnimation = async () => {
-      await animateOpacity(1);
+    const showNextMessage = async () => {
+      await animateOpacity(affSeqOpacity, 1);
 
-      if (idx === messages.length - 1) {
+      if (sequenceIdx === messages.length - 1) {
+        setAffSeqComplete(true);
+        await showHouseIcon();
         return;
       }
 
-      await animateOpacity(0);
-      setIdx((prevIdx) => (prevIdx + 1) % messages.length);
+      await animateOpacity(affSeqOpacity, 0);
+
+      if (isMounted) {
+        setSequenceIdx((prev) => (prev + 1) % messages.length);
+      }
     };
 
-    runAnimation();
-  }, [idx, opacity]);
+    const showHouseIcon = async () => {
+      await animateOpacity(houseIconOpacity, 0.5);
+    };
+
+    showNextMessage();
+
+    // Load fonts asynchronously
+
+    async function loadResources() {
+      try {
+        await Font.loadAsync(FontAwesome5.font);
+      } catch (e) {
+        console.warn(e);
+      } finally {
+        setFontsLoaded(true);
+      }
+    }
+
+    loadResources();
+
+    // Cleanup function to prevent memory leaks
+
+    return () => {
+      isMounted = false;
+    };
+  }, [sequenceIdx, affSeqOpacity, houseIconOpacity]);
+
+  if (!fontsLoaded) {
+    return null;
+  }
 
   return (
-    <Animated.Text style={[styles.text, { opacity }]}>
-      {messages[idx]}
-    </Animated.Text>
-  )
+    <ThemedView style={styles.container} onLayout={onLayoutRootView}>
+      <Animated.Text
+        style={[styles.text, { opacity: affSeqOpacity }]}
+      >
+        {messages[sequenceIdx]}
+      </Animated.Text>
+      <FontAwesome5
+        style={[{ opacity: houseIconOpacity }]}
+        name="house-user"
+        size={48}
+        color="white"
+      />
+    </ThemedView>
+  );
 }

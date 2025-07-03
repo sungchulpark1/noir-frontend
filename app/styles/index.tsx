@@ -16,6 +16,7 @@ export const styles = StyleSheet.create({
     marginBottom: 40,
   },
   eyeContainer: {
+    backgroundColor: '#000',
     alignItems: 'center',
     marginTop: 20,
   },
