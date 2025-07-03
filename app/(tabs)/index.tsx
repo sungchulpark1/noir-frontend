@@ -15,11 +15,15 @@ type RootStackParamList = {
   home: undefined;
 };
 
-const messages = ["You're Early.", "You're Late.", "You're Here."];
+const ctaMessages = [
+  "You're Early.", 
+  "You're Late.", 
+  "You're Here."
+];
 
 export default function LandingPage() {
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
-  const [index, setIndex] = useState(0);
+  const [ctaMessageInd, setCtaMessageInd] = useState(0);
   const [canProceed, setCanProceed] = useState(false);
   const textOpacity = useRef(new Animated.Value(0)).current;
   const hintTextOpacity = useRef(new Animated.Value(1)).current;
@@ -64,8 +68,8 @@ export default function LandingPage() {
 
     const interval = setInterval(() => {
       fadeTextOut(() => {
-        const next = (index + 1) % messages.length;
-        setIndex(next);
+        const next = (ctaMessageInd + 1) % ctaMessages.length;
+        setCtaMessageInd(next);
         fadeTextIn();
 
         if (next === 2) {
@@ -94,7 +98,7 @@ export default function LandingPage() {
       clearInterval(interval);
       clearInterval(loadingInterval);
     };
-  }, [index, textOpacity, hintTextOpacity, canProceed, setCanProceed]);
+  }, [ctaMessageInd, textOpacity, hintTextOpacity, canProceed, setCanProceed]);
 
   const handleTap = () => {
     if (canProceed) {
@@ -105,7 +109,7 @@ export default function LandingPage() {
   return (
     <Pressable onPress={handleTap} style={styles.container} disabled={!canProceed}>
       <Animated.Text style={[styles.text, { opacity: textOpacity }]}>
-        {messages[index]}
+        {ctaMessages[ctaMessageInd]}
       </Animated.Text>
       <View style={styles.eyeContainer}>
         <EyeIcon width={64} height={64} />
