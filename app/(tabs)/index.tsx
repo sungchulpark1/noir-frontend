@@ -4,12 +4,13 @@ import { useEffect, useRef, useState } from 'react';
 import {
   Animated,
   Pressable,
-  StyleSheet,
   Text,
-  View,
+  View
 } from 'react-native';
 
 import { EyeIcon } from '@/components/EyeIcon';
+
+import { styles } from '../styles';
 
 type RootStackParamList = {
   home: undefined;
@@ -20,6 +21,10 @@ const ctaMessages = [
   "You're Late.", 
   "You're Here."
 ];
+
+// const PresenceMessage = <Animated.Text style={[styles.text, { opacity: textOpacity }]}>
+//         {ctaMessages[ctaMessageInd]}
+//       </Animated.Text>
 
 export default function LandingPage() {
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
@@ -108,9 +113,9 @@ export default function LandingPage() {
 
   return (
     <Pressable onPress={handleTap} style={styles.container} disabled={!canProceed}>
-      <Animated.Text style={[styles.text, { opacity: textOpacity }]}>
+      {/* <Animated.Text style={[styles.text, { opacity: textOpacity }]}>
         {ctaMessages[ctaMessageInd]}
-      </Animated.Text>
+      </Animated.Text> */}
       <View style={styles.eyeContainer}>
         <EyeIcon width={64} height={64} />
         <Text style={styles.tagline}>IT’S YOU</Text>
@@ -121,34 +126,3 @@ export default function LandingPage() {
     </Pressable>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#000',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  text: {
-    color: '#EEE8D5',
-    fontSize: 28,
-    fontFamily: 'Georgia',
-    marginBottom: 40,
-  },
-  eyeContainer: {
-    alignItems: 'center',
-    marginTop: 20,
-  },
-  tagline: {
-    color: '#EEE8D5',
-    fontSize: 16,
-    marginTop: 8,
-    letterSpacing: 1.2,
-  },
-  hint: {
-    color: '#888',
-    fontSize: 14,
-    marginTop: 40,
-    height: 20,
-  },
-});
