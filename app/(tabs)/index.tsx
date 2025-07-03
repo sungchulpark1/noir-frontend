@@ -1,6 +1,6 @@
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import {
   Animated,
   Pressable,
@@ -10,100 +10,75 @@ import {
 
 import { EyeIcon } from '@/components/EyeIcon';
 
+import PresenceMessage from '../components';
 import { styles } from '../styles';
 
 type RootStackParamList = {
   home: undefined;
 };
 
-const ctaMessages = [
-  "You're Early.", 
-  "You're Late.", 
-  "You're Here."
-];
-
-// const PresenceMessage = <Animated.Text style={[styles.text, { opacity: textOpacity }]}>
-//         {ctaMessages[ctaMessageInd]}
-//       </Animated.Text>
-
 export default function LandingPage() {
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const [ctaMessageInd, setCtaMessageInd] = useState(0);
   const [canProceed, setCanProceed] = useState(false);
-  const textOpacity = useRef(new Animated.Value(0)).current;
+  
   const hintTextOpacity = useRef(new Animated.Value(1)).current;
   const [hintText, setHintText] = useState('Loading.');
 
-  useEffect(() => {
-    if (canProceed) return;
+  // useEffect(() => {
+  //   if (canProceed) return;
 
-    const fadeTextOut = (onComplete: () => void) => {
-      Animated.timing(textOpacity, {
-        toValue: 0,
-        duration: 600,
-        useNativeDriver: true,
-      }).start(() => onComplete());
-    };
+  //   const fadeHintTextOut = (onComplete: () => void) => {
+  //     Animated.timing(hintTextOpacity, {
+  //       toValue: 0,
+  //       duration: 600,
+  //       useNativeDriver: true,
+  //     }).start(() => onComplete());
+  //   };
 
-    const fadeTextIn = () => {
-      Animated.timing(textOpacity, {
-        toValue: 1,
-        duration: 600,
-        useNativeDriver: true,
-      }).start();
-    };
+  //   const fadeHintTextIn = (onComplete: () => void) => {
+  //     Animated.timing(hintTextOpacity, {
+  //       toValue: 1,
+  //       duration: 600,
+  //       useNativeDriver: true,
+  //     }).start(() => onComplete());
+  //   };
 
-    const fadeHintTextOut = (onComplete: () => void) => {
-      Animated.timing(hintTextOpacity, {
-        toValue: 0,
-        duration: 600,
-        useNativeDriver: true,
-      }).start(() => onComplete());
-    };
+    // fadeTextIn();
 
-    const fadeHintTextIn = (onComplete: () => void) => {
-      Animated.timing(hintTextOpacity, {
-        toValue: 1,
-        duration: 600,
-        useNativeDriver: true,
-      }).start(() => onComplete());
-    };
+    // const interval = setInterval(() => {
+    //   fadeTextOut(() => {
+    //     const next = (ctaMessageInd + 1) % ctaMessages.length;
+    //     setCtaMessageInd(next);
+    //     fadeTextIn();
 
-    fadeTextIn();
+    //     if (next === 2) {
+    //       fadeHintTextOut(() => {
+    //         setHintText('Tap To Continue');
+    //         fadeHintTextIn(() => {
+    //           setCanProceed(true);
+    //         });
+    //       });
+    //     }
+    //   });
+    // }, 2000);
 
-    const interval = setInterval(() => {
-      fadeTextOut(() => {
-        const next = (ctaMessageInd + 1) % ctaMessages.length;
-        setCtaMessageInd(next);
-        fadeTextIn();
+    //  const loadingInterval = setInterval(() => {
+    //   if (canProceed) return;
 
-        if (next === 2) {
-          fadeHintTextOut(() => {
-            setHintText('Tap To Continue');
-            fadeHintTextIn(() => {
-              setCanProceed(true);
-            });
-          });
-        }
-      });
-    }, 2000);
-
-     const loadingInterval = setInterval(() => {
-      if (canProceed) return;
-
-      setHintText(prev => {
-        if (prev === 'Tap To Continue') return prev;
+    //   setHintText(prev => {
+    //     if (prev === 'Tap To Continue') return prev;
         
-        const dots = '.'.repeat((prev.match(/\./g) || []).length % 3 + 1);
-        return 'Loading' + dots;
-      });
-    }, 800);
+    //     const dots = '.'.repeat((prev.match(/\./g) || []).length % 3 + 1);
+    //     return 'Loading' + dots;
+    //   });
+    // }, 800);
 
-    return () => { 
-      clearInterval(interval);
-      clearInterval(loadingInterval);
-    };
-  }, [ctaMessageInd, textOpacity, hintTextOpacity, canProceed, setCanProceed]);
+    // return () => { 
+      // clearInterval(interval);
+  //     clearInterval(loadingInterval);
+  //   };
+  // }, [ctaMessageInd, textOpacity, hintTextOpacity, canProceed, setCanProceed]);
 
   const handleTap = () => {
     if (canProceed) {
@@ -116,6 +91,7 @@ export default function LandingPage() {
       {/* <Animated.Text style={[styles.text, { opacity: textOpacity }]}>
         {ctaMessages[ctaMessageInd]}
       </Animated.Text> */}
+      <PresenceMessage />
       <View style={styles.eyeContainer}>
         <EyeIcon width={64} height={64} />
         <Text style={styles.tagline}>IT’S YOU</Text>
