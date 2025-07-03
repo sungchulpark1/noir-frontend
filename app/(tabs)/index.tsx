@@ -9,7 +9,7 @@ import {
   View,
 } from 'react-native';
 
-import { EyeIcon } from '../../components/EyeIcon';
+import { EyeIcon } from '@/components/EyeIcon';
 
 type RootStackParamList = {
   home: undefined;
