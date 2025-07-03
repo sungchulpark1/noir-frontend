@@ -19,7 +19,7 @@ export default function PresenceMessage() {
   useEffect(() => {
     const animateOpacity = (
       opacityTarget: number,
-      animationDuration: number = 750
+      animationDuration: number = 1000
     ) => {
       return new Promise<void>((resolve) => {
         Animated.timing(opacity, {
