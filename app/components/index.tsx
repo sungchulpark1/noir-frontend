@@ -40,7 +40,7 @@ export default function PresenceMessage() {
     const animateOpacity = (
       opacity: Animated.Value,
       toValue: number,
-      duration = 200,
+      duration = 800,
     ) =>
       new Promise<void>((resolve) => {
         Animated.timing(opacity, {
