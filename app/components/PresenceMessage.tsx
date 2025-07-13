@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Animated } from 'react-native';
 
 import { ThemedView } from '@/components/ThemedView';
@@ -30,9 +30,9 @@ export default function PresenceMessage() {
 
   const [affSeqComplete, setAffSeqComplete] = useState(false);
 
-  const onLayoutRootView = useCallback(async () => {
+  useEffect(() => {
     if (fontsLoaded) {
-      await SplashScreen.hideAsync();
+      SplashScreen.hideAsync();
     }
   }, [fontsLoaded]);
 
@@ -102,7 +102,7 @@ export default function PresenceMessage() {
   const styles = defaultStyles();
 
   return (
-    <ThemedView style={styles.container} onLayout={onLayoutRootView}>
+    <ThemedView style={styles.container}>
       <Animated.Text
         style={[styles.text, { opacity: affSeqOpacity }]}
       >
