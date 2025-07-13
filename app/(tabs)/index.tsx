@@ -3,8 +3,8 @@ import {
 } from 'react-native';
 
 
-import PresenceMessage from '../components';
-import { styles } from '../styles';
+import PresenceMessage from '../components/PresenceMessage';
+import { defaultStyles } from '../styles';
 
 // type RootStackParamList = {
 //   home: undefined;
@@ -20,6 +20,8 @@ export default function LandingPage() {
     //   navigation.navigate('home');
     // }
   };
+
+  const styles = defaultStyles();
 
   return (
     <Pressable onPress={handleTap} style={styles.container} disabled={!canProceed}>

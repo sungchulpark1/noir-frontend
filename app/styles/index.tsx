@@ -2,7 +2,7 @@ import {
   StyleSheet,
 } from 'react-native';
 
-export const styles = StyleSheet.create({
+export const defaultStyles = () => StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#000',
@@ -33,3 +33,5 @@ export const styles = StyleSheet.create({
     height: 20,
   },
 });
+
+export default defaultStyles;

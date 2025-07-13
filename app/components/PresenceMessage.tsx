@@ -7,7 +7,7 @@ import { FontAwesome5 } from '@expo/vector-icons';
 import * as Font from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
 
-import { styles } from '../styles';
+import { defaultStyles } from '../styles';
 
 const messages = [
   "You're Early.",
@@ -16,6 +16,8 @@ const messages = [
   "You Made It.",
   "Welcome Home.",
 ];
+
+const AnimatedFontAwesome5 = Animated.createAnimatedComponent(FontAwesome5);
 
 export default function PresenceMessage() {
   const [fontsLoaded, setFontsLoaded] = useState(false);
@@ -97,6 +99,8 @@ export default function PresenceMessage() {
     return null;
   }
 
+  const styles = defaultStyles();
+
   return (
     <ThemedView style={styles.container} onLayout={onLayoutRootView}>
       <Animated.Text
@@ -104,8 +108,8 @@ export default function PresenceMessage() {
       >
         {messages[sequenceIdx]}
       </Animated.Text>
-      <FontAwesome5
-        style={[{ opacity: houseIconOpacity }]}
+      <AnimatedFontAwesome5
+        style={{ opacity: houseIconOpacity }}
         name="house-user"
         size={48}
         color="white"

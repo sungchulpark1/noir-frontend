@@ -5,6 +5,8 @@ import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 
 export default function NotFoundScreen() {
+  const styles = defaultStyles();
+
   return (
     <>
       <Stack.Screen options={{ title: 'Oops!' }} />
@@ -18,7 +20,7 @@ export default function NotFoundScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+const defaultStyles = () => StyleSheet.create({
   container: {
     flex: 1,
     alignItems: 'center',
